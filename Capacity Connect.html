@@ -1,0 +1,656 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Capacity Connect</title>
+    <style>
+        :root {
+            --bg: #f4f6fb;
+            --cd: #fff;
+            --fg: #0f1a3a;
+            --mu: #5b6789;
+            --pr: #3730a3;
+            --p2: #4f46e5;
+            --bd: #e2e6f2;
+            --ok: #15803d;
+            --okb: #dcfce7;
+            --wa: #b45309;
+            --wab: #fef3c7;
+            --er: #b91c1c;
+            --erb: #fee2e2;
+            box-sizing: border-box;
+            padding-top: env(safe-area-inset-top, 0px);
+            padding-bottom: env(safe-area-inset-bottom, 0px)
+        }
+
+        @media(prefers-color-scheme:light) {
+            :root:not([data-theme=light]) {
+                --bg: #0d1226;
+                --cd: #161d38;
+                --fg: #e8ecff;
+                --mu: #9aa6cc;
+                --pr: #a5b4fc;
+                --bd: #2a3357;
+                --ok: #4ade80;
+                --okb: #123524;
+                --wa: #fbbf24;
+                --wab: #3a2a0b;
+                --er: #f87171;
+                --erb: #3d1417
+            }
+        }
+
+        :root[data-theme=dark] {
+            --bg: #0d1226;
+            --cd: #161d38;
+            --fg: #e8ecff;
+            --mu: #9aa6cc;
+            --pr: #a5b4fc;
+            --bd: #2a3357;
+            --ok: #4ade80;
+            --okb: #123524;
+            --wa: #fbbf24;
+            --wab: #3a2a0b;
+            --er: #f87171;
+            --erb: #3d1417
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--fg);
+            font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif
+        }
+
+        #r {
+            min-height: 100%
+        }
+
+        h1,
+        h2,
+        h3 {
+            margin: .2em 0
+        }
+
+        .mu {
+            color: var(--mu)
+        }
+
+        .row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap
+        }
+
+        .sp {
+            justify-content: space-between
+        }
+
+        .b {
+            background: var(--p2);
+            color: #fff;
+            border: 0;
+            border-radius: 8px;
+            padding: 9px 16px;
+            cursor: pointer;
+            font: inherit;
+            font-weight: 600
+        }
+
+        .b.o {
+            background: transparent;
+            color: var(--pr);
+            border: 1px solid var(--bd)
+        }
+
+        .b.s {
+            padding: 5px 10px;
+            font-size: 13px
+        }
+
+        .cd {
+            background: var(--cd);
+            border: 1px solid var(--bd);
+            border-radius: 12px;
+            padding: 16px;
+            margin: 0 0 14px
+        }
+
+        .g {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 14px;
+            margin-bottom: 14px
+        }
+
+        .g .cd {
+            margin: 0
+        }
+
+        .bar {
+            height: 9px;
+            background: var(--bd);
+            border-radius: 9px;
+            overflow: hidden;
+            flex: 1;
+            min-width: 60px
+        }
+
+        .bar i {
+            display: block;
+            height: 100%;
+            border-radius: 9px
+        }
+
+        .bd {
+            display: inline-block;
+            padding: 2px 9px;
+            border-radius: 99px;
+            font-size: 12px;
+            font-weight: 600;
+            background: var(--bd)
+        }
+
+        .bd.ok {
+            background: var(--okb);
+            color: var(--ok)
+        }
+
+        .bd.wa {
+            background: var(--wab);
+            color: var(--wa)
+        }
+
+        .bd.er {
+            background: var(--erb);
+            color: var(--er)
+        }
+
+        .cr {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin: 8px 0
+        }
+
+        .cr span {
+            width: 130px;
+            font-size: 13px
+        }
+
+        .cr b {
+            width: 52px;
+            text-align: right;
+            font-size: 13px
+        }
+
+        .top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 20px;
+            background: var(--cd);
+            border-bottom: 1px solid var(--bd);
+            position: relative
+        }
+
+        .app {
+            display: flex;
+            min-height: calc(100vh - 57px)
+        }
+
+        .side {
+            width: 220px;
+            padding: 12px;
+            background: var(--cd);
+            border-right: 1px solid var(--bd);
+            flex: none
+        }
+
+        .side a {
+            display: block;
+            padding: 9px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            color: var(--mu)
+        }
+
+        .side a.on {
+            background: var(--p2);
+            color: #fff
+        }
+
+        .main {
+            flex: 1;
+            padding: 20px;
+            min-width: 0
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 8px;
+            border-bottom: 1px solid var(--bd)
+        }
+
+        .sc {
+            overflow-x: auto
+        }
+
+        input,
+        select,
+        textarea {
+            font: inherit;
+            padding: 8px;
+            border: 1px solid var(--bd);
+            border-radius: 8px;
+            background: var(--bg);
+            color: var(--fg);
+            width: 100%;
+            margin: 3px 0 8px
+        }
+
+        .hero {
+            text-align: center;
+            padding: 70px 20px;
+            background: linear-gradient(135deg, #312e81, #4f46e5);
+            color: #fff
+        }
+
+        .hero h1 {
+            font-size: clamp(30px, 6vw, 52px);
+            letter-spacing: 2px
+        }
+
+        .land .g {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 0 16px
+        }
+
+        .bell {
+            position: relative;
+            cursor: pointer;
+            font-size: 20px;
+            background: none;
+            border: 0
+        }
+
+        .bell em {
+            position: absolute;
+            top: -4px;
+            right: -6px;
+            background: var(--er);
+            color: #fff;
+            font-size: 11px;
+            border-radius: 9px;
+            padding: 0 5px;
+            font-style: normal
+        }
+
+        .pop {
+            position: absolute;
+            right: 16px;
+            top: 54px;
+            width: min(340px, 92vw);
+            background: var(--cd);
+            border: 1px solid var(--bd);
+            border-radius: 12px;
+            padding: 12px;
+            z-index: 9;
+            box-shadow: 0 8px 30px #0003
+        }
+
+        .pop p {
+            margin: 6px 0;
+            font-size: 14px
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #111a3d;
+            color: #fff;
+            padding: 10px 18px;
+            border-radius: 9px;
+            z-index: 99
+        }
+
+        .hm td {
+            text-align: center;
+            font-weight: 600
+        }
+
+        .step {
+            border: 1px solid var(--bd);
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer
+        }
+
+        .ar {
+            text-align: center;
+            color: var(--mu)
+        }
+
+        .cert {
+            border: 8px double var(--p2);
+            padding: 36px;
+            text-align: center;
+            background: var(--cd);
+            border-radius: 6px
+        }
+
+        .cert h1 {
+            color: var(--pr)
+        }
+
+        @media(max-width:760px) {
+            .app {
+                flex-direction: column
+            }
+
+            .side {
+                width: 100%;
+                display: flex;
+                overflow-x: auto;
+                border-right: 0;
+                border-bottom: 1px solid var(--bd)
+            }
+
+            .side a {
+                white-space: nowrap
+            }
+
+            .cr span {
+                width: 90px
+            }
+        }
+
+        @media print {
+            body * {
+                visibility: hidden
+            }
+
+            .cert,
+            .cert * {
+                visibility: visible
+            }
+
+            .cert {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="r"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/htm@3.1.1/dist/htm.umd.js"></script>
+    <script>
+        const { useState, useEffect } = React;
+        const h = (t, p, ...c) => React.createElement(t, p && p.class ? (({ class: k, ...r }) => ({ ...r, className: k }))(p) : p, ...c);
+        const html = htm.bind(h);
+        const load = () => { try { return JSON.parse(localStorage.getItem('cc1')) } catch (e) { return null } };
+        const save = s => { try { localStorage.setItem('cc1', JSON.stringify(s)) } catch (e) { } };
+        const TR = [
+            { n: 'Dr. Anita Verma', ex: ['Machine Learning', 'Python', 'Data Science'], y: 8, r: 4.8, o: 'IIT Delhi', c: 3 },
+            { n: 'Prof. Suresh Iyer', ex: ['Data Science', 'Machine Learning', 'Statistics'], y: 6, r: 4.6, o: 'IISc Bengaluru', c: 2 },
+            { n: 'Dr. Meera Nair', ex: ['Python', 'AI', 'Deep Learning'], y: 5, r: 4.4, o: 'C-DAC Pune', c: 2 },
+            { n: 'Vikram Singh', ex: ['Cloud Computing', 'DevOps', 'Python'], y: 9, r: 4.7, o: 'NIC Delhi', c: 4 },
+            { n: 'Dr. Kavita Rao', ex: ['Research Methodology', 'Statistics', 'Data Analysis'], y: 12, r: 4.9, o: 'ISI Kolkata', c: 3 },
+            { n: 'Arjun Mehta', ex: ['Data Visualization', 'Data Analysis'], y: 7, r: 4.5, o: 'NIT Trichy', c: 1 }];
+        const REL = { Python: ['Data Science', 'DevOps'], 'Machine Learning': ['Python', 'AI', 'Deep Learning', 'Data Science'], 'Data Analysis': ['Statistics', 'Data Science', 'Data Visualization'], 'Cloud Computing': ['DevOps', 'Python'], 'Data Visualization': ['Data Analysis', 'Python'], 'Research Methodology': ['Statistics', 'Data Analysis'] };
+        const match = (t, sk) => Math.round((t.ex.includes(sk) ? 60 : (REL[sk] || []).some(x => t.ex.includes(x)) ? 45 : 5) + Math.min(t.y / 10, 1) * 25 + t.r / 5 * 15);
+        const C = [
+            ['c1', 'Python for Data Science', 'Python', 'Beginner', 4, 0, 'Core Python, NumPy and pandas for scientific data workflows.'],
+            ['c2', 'Machine Learning Basics', 'Machine Learning', 'Beginner', 3, 0, 'Foundations of ML: data, features and simple models.'],
+            ['c3', 'Machine Learning Fundamentals', 'Machine Learning', 'Intermediate', 5, 1, 'Supervised and unsupervised learning with hands-on evaluation.'],
+            ['c4', 'Applied Machine Learning', 'Machine Learning', 'Advanced', 6, 0, 'Deploying ML models on real organizational datasets.'],
+            ['c5', 'Advanced Data Analytics', 'Data Analysis', 'Intermediate', 4, 4, 'Statistical analysis and exploratory analytics at scale.'],
+            ['c6', 'Cloud Computing Basics', 'Cloud Computing', 'Intermediate', 3, 3, 'Cloud architecture, storage and secure deployment.'],
+            ['c7', 'Research Methodology', 'Research Methodology', 'Intermediate', 4, 4, 'Designing, executing and reporting rigorous research.'],
+            ['c8', 'Data Visualization', 'Data Visualization', 'Intermediate', 3, 5, 'Dashboards and visual storytelling with data.']].map(([id, t, sk, df, du, tr, d]) => ({ id, t, sk, df, du, tr, d }));
+        const Q = {
+            'Machine Learning': [
+                ['Which technique is commonly used for supervised learning?', ['Linear Regression', 'Random Search', 'Clustering', 'Association Rules'], 0],
+                ['Which metric suits a classification problem?', ['RMSE', 'Accuracy', 'R-squared', 'Silhouette width'], 1],
+                ['Overfitting means the model...', ['Performs well on new data', 'Memorises training data', 'Has too few features', 'Trains too fast'], 1],
+                ['Which is an unsupervised method?', ['K-Means', 'Logistic Regression', 'Decision Tree', 'SVM'], 0],
+                ['Data is usually split into...', ['Train and test sets', 'Rows and columns', 'Input pipes', 'None'], 0]],
+            Python: [['Which library provides DataFrames?', ['pandas', 'flask', 'pytest', 'tkinter'], 0], ['Which is a mutable type?', ['tuple', 'str', 'list', 'int'], 2], ['What does len([1,2,3]) return?', ['2', '3', '4', 'Error'], 1]],
+            'Data Analysis': [['The median is...', ['The average', 'The middle value', 'The most frequent value', 'The range'], 1], ['An outlier is...', ['A missing value', 'An extreme value', 'A duplicate', 'A category'], 1], ['Correlation measures...', ['Causation', 'Association strength', 'Sample size', 'Bias'], 1]],
+            'Cloud Computing': [['IaaS provides...', ['Virtual infrastructure', 'Only email', 'Desktop apps', 'Printers'], 0], ['Elasticity means...', ['Fixed capacity', 'Scaling with demand', 'Data deletion', 'Slow networks'], 1], ['Object storage suits...', ['Unstructured files', 'CPU scheduling', 'Screen rendering', 'Compilers'], 0]],
+            'Data Visualization': [['Best chart for trend over time?', ['Line chart', 'Pie chart', 'Venn diagram', 'Table'], 0], ['Too many colours cause...', ['Clarity', 'Visual clutter', 'Faster loading', 'Accuracy'], 1], ['A heatmap encodes values as...', ['Colour intensity', 'Fonts', 'Sounds', 'Angles'], 0]],
+            'Research Methodology': [['A hypothesis is...', ['A testable statement', 'A conclusion', 'A dataset', 'A citation'], 0], ['Sampling bias affects...', ['Representativeness', 'Font size', 'Speed', 'Cost only'], 0], ['A control group is used to...', ['Compare outcomes', 'Save money', 'Skip ethics', 'Add variables'], 0]]
+        };
+        const tgt = c => c.target || { Beginner: 3, Intermediate: 4, Advanced: 5 }[c.df];
+        const mods = c => c.mods || ['Introduction', 'Fundamentals', 'Practical Applications'];
+        const qs = c => c.qs || Q[c.sk] || Q.Python;
+        const pr = (c, e) => e ? Math.round((e.done.length + (e.passed ? 1 : 0)) / (mods(c).length + 1) * 100) : 0;
+        const all = S => C.concat(S.custom), vis = S => all(S).filter(c => S.pub[c.id] !== false), byId = (S, id) => all(S).find(c => c.id == id);
+        const gp = S => Object.keys(S.req).map(k => ({ k, c: S.cur[k] || 1, r: S.req[k], g: S.req[k] - (S.cur[k] || 1) })).sort((a, b) => b.g - a.g);
+        const st = g => g <= 0 ? ['Strong', 'ok'] : g == 1 ? ['Skill Gap', 'wa'] : ['Critical Gap', 'er'];
+        const rec = S => gp(S).filter(x => x.g > 0).map(x => { const c = vis(S).filter(c => c.sk == x.k && tgt(c) > x.c && !(S.enr[c.id] && S.enr[c.id].passed)).sort((a, b) => tgt(a) - tgt(b))[0]; return c && { c, x, why: `Recommended because your ${x.k} competency is ${x.c}/5 and your role requires ${x.r}/5.` } }).filter(Boolean);
+        const N = (s, ...t) => t.map(x => ({ t: x, r: 0 })).concat(s.notifs);
+        const enroll = (A, c) => { A.set(s => ({ enr: { ...s.enr, [c.id]: { done: [], passed: false } }, notifs: N(s, 'You enrolled in ' + c.t) })); A.T('Enrolled in ' + c.t) };
+        const S0 = {
+            view: 'landing', role: null, page: 'dashboard', cid: null, nopen: 0,
+            user: { name: 'Rahul Sharma', org: 'National Research Institute', dept: 'Research', desig: 'Scientist B', exp: 6, edu: 'M.Tech, Computer Science, IIT Kanpur (2018)' },
+            cur: { Python: 4, 'Data Analysis': 3, 'Machine Learning': 2, 'Cloud Computing': 3, 'Data Visualization': 2, 'Research Methodology': 3 },
+            req: { Python: 4, 'Data Analysis': 4, 'Machine Learning': 4, 'Cloud Computing': 4, 'Data Visualization': 3, 'Research Methodology': 3 },
+            enr: {}, hist: [], custom: [], pub: {}, off: {},
+            notifs: [{ t: 'New course available: Advanced Machine Learning', r: 0 }, { t: 'Your assessment deadline is tomorrow.', r: 0 }, { t: 'Your competency profile has been updated.', r: 1 }]
+        };
+        const Cd = ({ t, children }) => html`<section class="cd">${t && html`<h3>${t}</h3>`}${children}</section>`;
+        const Bar = ({ v, m = 5, col }) => html`<div class="bar"><i style=${{ width: Math.min(100, v / m * 100) + '%', background: col || 'var(--p2)' }}/></div>`;
+        const Ch = ({ t, d, m = 100, u = '%' }) => html`<${Cd} t=${t}>${d.map(([l, v]) => html`<div class="cr" key=${l}><span>${l}</span><${Bar} v=${v} m=${m}/><b>${v}${u}</b></div>`)}<//>`;
+        const Stat = ({ l, v }) => html`<div class="cd"><div class="mu">${l}</div><h2>${v}</h2></div>`;
+        const Empty = ({ m }) => html`<p class="mu">${m}</p>`;
+
+        const Dash = A => {
+            const { S, go } = A, g = gp(S), R = rec(S), ids = Object.keys(S.enr);
+            const avg = (g.reduce((a, x) => a + x.c, 0) / g.length).toFixed(1), lp = ids.length ? Math.round(ids.reduce((a, i) => a + pr(byId(S, i), S.enr[i]), 0) / ids.length) : 0;
+            return html`<div><h2>Welcome, ${S.user.name}</h2><div class="g">
+<${Stat} l="Overall Competency" v=${avg + ' / 5'}/><${Stat} l="Learning Progress" v=${lp + '%'}/><${Stat} l="Active Courses" v=${ids.filter(i => !S.enr[i].passed).length}/>
+<${Stat} l="Certificates" v=${ids.filter(i => S.enr[i].passed).length}/><${Stat} l="Skill Gaps" v=${g.filter(x => x.g > 0).length}/></div>
+<${Cd} t="My Recommended Courses">${R.length ? R.slice(0, 3).map(({ c, why }) => html`<div key=${c.id} class="row sp" style=${{ margin: '8px 0' }}><div><b>${c.t}</b><div class="mu">${why}</div></div><button class="b s" onClick=${() => go('course', c.id)}>View course</button></div>`) : html`<${Empty} m="No skill gaps identified. You meet every required level."/>`}<//>
+<div class="g"><${Ch} t="My Competencies (of 5)" d=${g.map(x => [x.k, x.c])} m=${5} u="/5"/>
+<${Cd} t="Competency Timeline">${S.hist.length ? S.hist.map((x, i) => html`<p key=${i}>${x.sk}: <b>${x.f} → ${x.t}</b> <span class="mu">(${x.sc}% on ${x.d})</span></p>`) : html`<${Empty} m="No competency updates yet. Complete an assessment to see changes."/>`}<//></div></div>`
+        };
+
+        const Prof = A => {
+            const { S, set, T } = A; const [f, sf] = useState(S.user), [ed, se] = useState(0);
+            if (S.role == 'trainer') { const t = TR[0]; return html`<${Cd} t=${t.n}><p>${t.o} · ${t.y} years experience · ⭐ ${t.r}</p>${t.ex.map((x, i) => html`<div class="cr" key=${x}><span>${x}</span><${Bar} v=${5 - Math.min(i, 1)} m=${5}/><b>${i ? 'Advanced' : 'Expert'}</b></div>`)}<//>` }
+            const F = [['name', 'Name'], ['org', 'Organization'], ['dept', 'Department'], ['desig', 'Designation'], ['exp', 'Experience (years)'], ['edu', 'Education']];
+            const done = Object.values(S.enr).filter(e => e.passed).length;
+            return html`<div><${Cd} t="Profile">${F.map(([k, l]) => html`<label key=${k}>${l}${ed ? html`<input value=${f[k]} onInput=${e => sf({ ...f, [k]: e.target.value })}/>` : html`<div><b>${S.user[k]}</b></div>`}</label>`)}
+${ed ? html`<button class="b" onClick=${() => { set({ user: f }); se(0); T('Profile saved') }}>Save</button>` : html`<button class="b o" onClick=${() => se(1)}>Edit profile</button>`}<//>
+<${Ch} t="Competencies" d=${gp(S).map(x => [x.k, x.c])} m=${5} u="/5"/>
+<${Cd} t="Certifications"><p>AWS Cloud Practitioner (2023)</p>${Object.keys(S.enr).filter(i => S.enr[i].passed).map(i => html`<p key=${i}>${byId(S, i).t} <span class="mu">(${S.enr[i].cert.id})</span></p>`)}<//></div>`
+        };
+
+        const Skills = A => html`<div><${Ch} t="My Skills & Competency Levels" d=${gp(A.S).map(x => [x.k, x.c])} m=${5} u="/5"/>
+<${Cd} t="Competency Timeline">${A.S.hist.length ? A.S.hist.map((x, i) => html`<p key=${i}>Your ${x.sk} competency improved from ${x.f} → ${x.t}.</p>`) : html`<${Empty} m="No updates yet."/>`}<//></div>`;
+
+        const Path = ({ S, go }) => {
+            const g = gp(S)[0]; if (!g || g.g <= 0) return html`<${Empty} m="No skill gaps identified."/>`;
+            const cs = vis(S).filter(c => c.sk == g.k && tgt(c) > g.c).sort((a, b) => tgt(a) - tgt(b));
+            return html`<${Cd} t=${'Recommended Learning Path: ' + g.k}>${cs.map(c => html`<div key=${c.id}><div class="step" onClick=${() => go('course', c.id)}>${c.t} ${S.enr[c.id] && S.enr[c.id].passed ? '✓' : ''}</div><div class="ar">↓</div></div>`)}<div class="step">Assessment</div><div class="ar">↓</div><div class="step">Competency Update</div><//>`
+        };
+        const Gap = A => {
+            const { S, go } = A, g = gp(S), tot = g.reduce((a, x) => a + Math.max(0, x.g), 0), mx = g.reduce((a, x) => a + x.r - 1, 0) || 1;
+            return html`<div><h2>Skill Gap Analysis</h2><div class="g"><${Stat} l="Skill Gap Score (0 = none)" v=${Math.round(tot / mx * 100)}/><${Stat} l="Critical gaps" v=${g.filter(x => x.g >= 2).length}/><${Stat} l="Strengths" v=${g.filter(x => x.g <= 0).length}/></div>
+${g.map(x => {
+                const [s, c] = st(x.g); return html`<${Cd} key=${x.k}><div class="row sp"><b>${x.k}</b><span class=${'bd ' + c}>${s}</span></div>
+<div class="cr"><span>Current ${x.c}/5</span><${Bar} v=${x.c} m=${5}/></div><div class="cr"><span>Required ${x.r}/5</span><${Bar} v=${x.r} m=${5} col="var(--ok)"/></div><//>`
+            })}
+<${Path} S=${S} go=${go}/></div>`
+        };
+
+        const CCard = ({ A, c, rc }) => {
+            const { S, go } = A, e = S.enr[c.id]; return html`<div class="cd"><div class="row sp"><span class="bd">${c.df}</span>${rc && html`<span class="bd ok">Recommended</span>`}</div><h3>${c.t}</h3><p class="mu">${c.d}</p><p>👨‍🏫 ${TR[c.tr].n}<br/>⏱ ${c.du} weeks · 🎯 ${c.sk}</p>
+${e ? html`<${Bar} v=${pr(c, e)} m=${100}/>` : null}<div class="row"><button class="b s" onClick=${() => go('course', c.id)}>${e ? (e.passed ? 'Completed ✓' : 'Continue (' + pr(c, e) + '%)') : 'View details'}</button>${!e && html`<button class="b o s" onClick=${() => enroll(A, c)}>Enroll</button>`}</div></div>`
+        };
+        const Cat = A => {
+            const { S } = A; const [sk, ssk] = useState(''), [df, sdf] = useState(''), [du, sdu] = useState(''); const R = rec(S).map(r => r.c.id);
+            const L = vis(S).filter(c => (!sk || c.sk == sk) && (!df || c.df == df) && (!du || (du == 's' ? c.du <= 3 : du == 'm' ? c.du > 3 && c.du <= 5 : c.du > 5)));
+            return html`<div><h2>Course Catalog</h2><div class="g"><select value=${sk} onChange=${e => ssk(e.target.value)}><option value="">All skills</option>${Object.keys(S.req).map(k => html`<option key=${k}>${k}</option>`)}</select>
+<select value=${df} onChange=${e => sdf(e.target.value)}><option value="">All difficulty</option><option>Beginner</option><option>Intermediate</option><option>Advanced</option></select>
+<select value=${du} onChange=${e => sdu(e.target.value)}><option value="">Any duration</option><option value="s">Up to 3 weeks</option><option value="m">4-5 weeks</option><option value="l">6+ weeks</option></select></div>
+<div class="g">${L.length ? L.map(c => html`<${CCard} key=${c.id} A=${A} c=${c} rc=${R.includes(c.id)}/>`) : html`<${Empty} m="No courses found"/>`}</div></div>`
+        };
+
+        const Course = A => {
+            const { S, set, T, go } = A, c = byId(S, S.cid), e = S.enr[c.id], m = mods(c), ok = e && e.done.length == m.length;
+            const mark = i => { set(s => { const x = s.enr[c.id]; return { enr: { ...s.enr, [c.id]: { ...x, done: [...x.done, i] } } } }); T('Lesson marked complete') };
+            return html`<div><button class="b o s" onClick=${() => go('courses')}>← Catalog</button><h2>${c.t}</h2><p class="mu">${c.d}</p>
+<div class="row"><span class="bd">${c.df}</span><span>👨‍🏫 ${TR[c.tr].n}</span><span>⏱ ${c.du} weeks</span><span>🎯 ${c.sk}</span></div>
+<${Cd} t="Learning objectives"><ul><li>Explain the core concepts of ${c.sk}</li><li>Apply techniques to organizational data</li><li>Reach competency level ${tgt(c)}/5 in ${c.sk}</li></ul><//>
+<${Cd} t=${'Progress: ' + pr(c, e) + '%'}><${Bar} v=${pr(c, e)} m=${100}/>${!e && html`<p><button class="b" onClick=${() => enroll(A, c)}>Start course</button></p>`}<//>
+<${Cd} t="Modules">${m.map((x, i) => html`<div key=${i} class="row sp" style=${{ margin: '8px 0' }}><div><b>Module ${i + 1} — ${x}</b><div class="mu">Lesson: key ideas and worked examples on ${x.toLowerCase()} in ${c.sk}.</div></div>
+${e && e.done.includes(i) ? html`<span class="bd ok">✓ Completed</span>` : e ? html`<button class="b s" onClick=${() => mark(i)}>Mark complete</button>` : html`<span class="bd">Enroll to start</span>`}</div>`)}
+<div class="row sp"><div><b>Module ${m.length + 1} — Assessment</b></div>${ok ? (e.passed ? html`<span class="bd ok">Passed ${e.score}%</span>` : html`<button class="b s" onClick=${() => go('take', c.id)}>Take assessment</button>`) : html`<span class="bd">🔒 Locked</span>`}</div><//>
+${e && e.passed && html`<button class="b" onClick=${() => go('cert', c.id)}>View certificate</button>`}</div>`
+        };
+
+        const Take = A => {
+            const { S, set, T, go } = A, c = byId(S, S.cid), Z = qs(c), e = S.enr[c.id]; const [a, sa] = useState([]); const r = e.score != null && e.ans;
+            const sub = () => {
+                if (a.filter(x => x != null).length < Z.length) return T('Answer every question first');
+                set(s => {
+                    const ok = Z.filter((q, i) => a[i] === q[2]).length, score = Math.round(ok / Z.length * 100), passed = score >= 60, cur = s.cur[c.sk] || 1, t = tgt(c);
+                    let nw = cur; if (passed && t > cur) nw = score >= 80 ? t : Math.min(t, cur + 1); const d = new Date().toLocaleDateString('en-IN');
+                    const x = { ...s.enr[c.id], score, passed, ans: a, from: cur, to: nw }; if (passed && !x.cert) x.cert = { id: 'CC-2026-' + Math.random().toString(36).slice(2, 8).toUpperCase(), date: d };
+                    return {
+                        enr: { ...s.enr, [c.id]: x }, cur: { ...s.cur, [c.sk]: nw }, hist: nw > cur ? [{ sk: c.sk, f: cur, t: nw, sc: score, d }, ...s.hist] : s.hist,
+                        notifs: passed ? N(s, `Assessment result: ${score}% in ${c.t}`, 'Congratulations! You earned a certificate.', 'Your competency profile has been updated.') : N(s, `Assessment result: ${score}%. Retake to pass.`)
+                    }
+                });
+            };
+            if (r) return html`<${Cd} t="Result"><h2>Score: ${e.score}%</h2><p><span class=${'bd ' + (e.passed ? 'ok' : 'er')}>${e.passed ? 'PASSED' : 'NOT PASSED (60% needed)'}</span></p>
+${e.passed && html`<p>${c.sk} competency ${e.to > e.from ? `updated from ${e.from}/5 → ${e.to}/5.` : `stays at ${e.to}/5 (target already met).`}</p>`}
+${Z.map((q, i) => html`<p key=${i}>${e.ans[i] === q[2] ? '✅' : '❌'} ${q[0]} <span class="mu">Correct: ${q[1][q[2]]}</span></p>`)}
+${e.passed ? html`<button class="b" onClick=${() => go('cert', c.id)}>View certificate</button>` : html`<button class="b" onClick=${() => set(s => ({ enr: { ...s.enr, [c.id]: { ...s.enr[c.id], score: null, ans: null } } }))}>Retake</button>`} <button class="b o" onClick=${() => go('dashboard')}>Dashboard</button><//>`;
+            return html`<div><h2>Assessment: ${c.t}</h2>${Z.map((q, i) => html`<${Cd} key=${i}><b>${i + 1}. ${q[0]}</b>${q[1].map((o, j) => html`<label key=${j} style=${{ display: 'block', margin: '6px 0' }}><input type="radio" style=${{ width: 'auto', marginRight: 8 }} name=${'q' + i} checked=${a[i] === j} onChange=${() => { const n = [...a]; n[i] = j; sa(n) }}/>${'ABCD'[j]}. ${o}</label>`)}<//>`)}<button class="b" onClick=${sub}>Submit assessment</button></div>`
+        };
+
+        const Learn = A => { const { S, go } = A, ids = Object.keys(S.enr); return html`<div><h2>My Learning</h2>${ids.length ? ids.map(i => { const c = byId(S, i); return html`<${Cd} key=${i}><div class="row sp"><b>${c.t}</b><button class="b s" onClick=${() => go('course', i)}>Open</button></div><${Bar} v=${pr(c, S.enr[i])} m=${100}/><//>` }) : html`<${Empty} m="No courses yet. Enroll from the catalog."/>`}</div>` };
+        const AList = A => { const { S, go } = A, ids = Object.keys(S.enr); return html`<div><h2>Assessments</h2>${ids.length ? ids.map(i => { const c = byId(S, i), e = S.enr[i], ok = e.done.length == mods(c).length; return html`<${Cd} key=${i}><div class="row sp"><div><b>${c.t}</b><div class="mu">${qs(c).length} MCQs · pass mark 60%</div></div>${e.passed ? html`<span class="bd ok">Passed ${e.score}%</span>` : ok ? html`<button class="b s" onClick=${() => go('take', i)}>Take</button>` : html`<span class="bd">🔒 Finish lessons first</span>`}</div><//>` }) : html`<${Empty} m="No upcoming assessments"/>`}</div>` };
+        const Certs = A => { const { S, go } = A, ids = Object.keys(S.enr).filter(i => S.enr[i].passed); return html`<div><h2>My Certificates</h2>${ids.length ? ids.map(i => html`<${Cd} key=${i}><div class="row sp"><div><b>${byId(S, i).t}</b><div class="mu">${S.enr[i].cert.id} · ${S.enr[i].cert.date}</div></div><button class="b s" onClick=${() => go('cert', i)}>View</button></div><//>`) : html`<${Empty} m="No certificates yet"/>`}</div>` };
+        const Cert = A => { const { S, go } = A, c = byId(S, S.cid), e = S.enr[c.id]; return html`<div><button class="b o s" onClick=${() => go('certs')}>← Certificates</button><p></p><div class="cert"><h1>CERTIFICATE OF COMPLETION</h1><p>This certifies that</p><h2>${S.user.name}</h2><p>has successfully completed</p><h2>${c.t}</h2><p>Trainer: ${TR[c.tr].n} · Score: ${e.score}%</p><p>Date: ${e.cert.date}</p><p><b>Certificate ID: ${e.cert.id}</b></p><p class="mu">${S.user.org} · Capacity Connect</p></div><p><button class="b" onClick=${() => window.print()}>Download / Print certificate (PDF)</button></p></div>` };
+
+        const TDash = A => {
+            const { S } = A, mine = all(S).filter(c => c.tr == 0); return html`<div><h2>Trainer Dashboard</h2><div class="g"><${Stat} l="My Courses" v=${mine.length}/><${Stat} l="Total Learners" v=${mine.length * 24 + Object.keys(S.enr).length}/><${Stat} l="Course Completion" v="71%"/><${Stat} l="Avg Assessment Score" v="78%"/><${Stat} l="Course Rating" v="4.8 ⭐"/></div>
+<${Ch} t="Learners per course" d=${mine.map((c, i) => [c.t, 20 + i * 6])} m=${40} u=""/></div>`
+        };
+        const MyC = A => { const { S } = A, mine = all(S).filter(c => c.tr == 0); return html`<div><h2>My Courses</h2><div class="g">${mine.map(c => html`<div key=${c.id} class="cd"><h3>${c.t}</h3><p class="mu">${c.d}</p><p>${mods(c).length} modules · ${qs(c).length} questions · 🎯 ${c.sk}</p></div>`)}</div></div>` };
+        const Create = A => {
+            const { S, set, T, go } = A; const [f, sf] = useState({ t: '', d: '', sk: 'Machine Learning', df: 'Intermediate', du: 4, m: 'Introduction, Core Concepts, Hands-on Practice' }), [qq, sq] = useState([]), [q, sqn] = useState({ q: '', o: ['', '', '', ''], a: 0 });
+            const addQ = () => { if (!q.q || q.o.some(x => !x)) return T('Fill question and all four options'); sq([...qq, [q.q, q.o, +q.a]]); sqn({ q: '', o: ['', '', '', ''], a: 0 }); T('Question added') };
+            const pub = () => {
+                if (!f.t || !f.d || !qq.length) return T('Add title, description and at least one question');
+                const c = { id: 'x' + Date.now(), t: f.t, d: f.d, sk: f.sk, df: f.df, du: +f.du, tr: 0, mods: f.m.split(',').map(x => x.trim()).filter(Boolean), qs: qq };
+                set(s => ({ custom: [...s.custom, c], notifs: N(s, 'New course available: ' + c.t) })); T('Course published'); go('mycourses')
+            };
+            const I = (k, l, t) => html`<label>${l}<input type=${t || 'text'} value=${f[k]} onInput=${e => sf({ ...f, [k]: e.target.value })}/></label>`;
+            return html`<div><h2>Create Course & Assessment</h2><${Cd}>${I('t', 'Course title')}${I('d', 'Description')}<label>Skill<select value=${f.sk} onChange=${e => sf({ ...f, sk: e.target.value })}>${Object.keys(S.req).map(k => html`<option key=${k}>${k}</option>`)}</select></label>
+<label>Difficulty<select value=${f.df} onChange=${e => sf({ ...f, df: e.target.value })}><option>Beginner</option><option>Intermediate</option><option>Advanced</option></select></label>${I('du', 'Duration (weeks)', 'number')}${I('m', 'Modules (comma separated)')}<//>
+<${Cd} t=${'MCQ questions (' + qq.length + ')'}><input placeholder="Question" value=${q.q} onInput=${e => sqn({ ...q, q: e.target.value })}/>${q.o.map((o, i) => html`<input key=${i} placeholder=${'Option ' + 'ABCD'[i]} value=${o} onInput=${e => { const n = [...q.o]; n[i] = e.target.value; sqn({ ...q, o: n }) }}/>`)}
+<select value=${q.a} onChange=${e => sqn({ ...q, a: e.target.value })}>${[0, 1, 2, 3].map(i => html`<option key=${i} value=${i}>Correct: ${'ABCD'[i]}</option>`)}</select><button class="b o" onClick=${addQ}>Add question</button><//>
+<button class="b" onClick=${pub}>Publish course</button></div>`
+        };
+        const Learners = A => {
+            const { S } = A, R = [['Priya Nair', 'Machine Learning Basics', 82, 88], ['Amit Kulkarni', 'Python for Data Science', 64, 71], ['Neha Joshi', 'Applied Machine Learning', 35, null], ['Rohan Gupta', 'Machine Learning Basics', 100, 91]];
+            Object.keys(S.enr).filter(i => byId(S, i).tr == 0).forEach(i => R.unshift([S.user.name, byId(S, i).t, pr(byId(S, i), S.enr[i]), S.enr[i].score]));
+            return html`<div><h2>Learners</h2><${Cd}><div class="sc"><table><thead><tr><th>Learner</th><th>Course</th><th>Progress</th><th>Score</th></tr></thead><tbody>${R.map((r, i) => html`<tr key=${i}><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}%</td><td>${r[3] == null ? '-' : r[3] + '%'}</td></tr>`)}</tbody></table></div><//></div>`
+        };
+        const Match = A => {
+            const { S } = A; const [sk, ssk] = useState('Machine Learning'), [v, sv] = useState(-1); const L = TR.map((t, i) => ({ t, i, m: match(t, sk) })).sort((a, b) => b.m - a.m);
+            return html`<div><h2>Find the Right Trainer</h2><select value=${sk} onChange=${e => ssk(e.target.value)}>${Object.keys(S.req).map(k => html`<option key=${k}>${k}</option>`)}</select>
+${L.slice(0, 4).map(({ t, i, m }) => html`<${Cd} key=${i}><div class="row sp"><b>${t.n}</b><span class=${'bd ' + (m >= 85 ? 'ok' : 'wa')}>Match ${m}%</span></div><p>Expertise: ${t.ex.join(', ')}<br/>Experience: ${t.y} years</p><${Bar} v=${m} m=${100}/><p><button class="b o s" onClick=${() => sv(v == i ? -1 : i)}>View Profile</button></p>${v == i && html`<p class="mu">${t.o} · ${t.c} certifications · Rating ${t.r}/5. Score = skill match (60) + experience (25) + rating (15).</p>`}<//>`)}</div>`
+        };
+
+        const U = [['Rahul Sharma', 'Trainee', 'Research'], ['Priya Nair', 'Trainee', 'IT'], ['Amit Kulkarni', 'Trainee', 'Operations'], ['Sneha Patil', 'Trainee', 'Administration'], ['Rohan Gupta', 'Trainee', 'Research'], ['Neha Joshi', 'Trainee', 'IT'], ['Dr. Anita Verma', 'Trainer', 'Research'], ['Prof. Suresh Iyer', 'Trainer', 'Research'], ['Vikram Singh', 'Trainer', 'IT'], ['S. Banerjee', 'Admin', 'Administration']];
+        const Charts = ({ S }) => {
+            const L = all(S); return html`<div class="g"><${Ch} t="Course Enrollment" d=${L.map((c, i) => [c.t.slice(0, 18), 30 + (i * 13) % 40 + (S.enr[c.id] ? 1 : 0)])} m=${80} u=""/><${Ch} t="Course Completion" d=${L.map((c, i) => [c.t.slice(0, 18), 45 + (i * 9) % 40])}/>
+<${Ch} t="Assessment Performance (avg)" d=${L.map((c, i) => [c.t.slice(0, 18), 62 + (i * 7) % 28])}/><${Ch} t="Competency Distribution" d=${[['Level 1', 12], ['Level 2', 28], ['Level 3', 51], ['Level 4', 34], ['Level 5', 13]]} m=${60} u=" staff"/></div>`
+        };
+        const ADash = A => { const { S } = A; return html`<div><h2>Admin Dashboard</h2><div class="g"><${Stat} l="Total Users" v="156"/><${Stat} l="Trainees" v="138"/><${Stat} l="Trainers" v="12"/><${Stat} l="Total Courses" v=${all(S).length}/><${Stat} l="Active Learners" v=${92 + Object.keys(S.enr).length}/><${Stat} l="Certificates Issued" v=${214 + Object.values(S.enr).filter(e => e.passed).length}/></div><${Charts} S=${S}/></div>` };
+        const Analytics = A => html`<div><h2>Analytics</h2><${Charts} S=${A.S}/></div>`;
+        const Users = A => { const { S, set, T } = A; return html`<div><h2>Users</h2><${Cd}><p class="mu">Recent users (10 of 156)</p><div class="sc"><table><thead><tr><th>Name</th><th>Role</th><th>Department</th><th>Status</th></tr></thead><tbody>${U.map(([n, r, d]) => html`<tr key=${n}><td>${n}</td><td>${r}</td><td>${d}</td><td><button class="b o s" onClick=${() => { set(s => ({ off: { ...s.off, [n]: !s.off[n] } })); T(n + (S.off[n] ? ' activated' : ' deactivated')) }}>${S.off[n] ? 'Inactive · Activate' : 'Active · Deactivate'}</button></td></tr>`)}</tbody></table></div><//></div>` };
+        const ACourses = A => { const { S, set, T } = A; return html`<div><h2>Courses</h2><${Cd}><div class="sc"><table><thead><tr><th>Course</th><th>Skill</th><th>Trainer</th><th>Status</th></tr></thead><tbody>${all(S).map(c => html`<tr key=${c.id}><td>${c.t}</td><td>${c.sk}</td><td>${TR[c.tr].n}</td><td><button class="b o s" onClick=${() => { set(s => ({ pub: { ...s.pub, [c.id]: s.pub[c.id] === false } })); T('Course status updated') }}>${S.pub[c.id] === false ? 'Draft · Publish' : 'Published · Unpublish'}</button></td></tr>`)}</tbody></table></div><//></div>` };
+        const Comps = A => {
+            const { S, set, T } = A; const [n, sn] = useState(''); return html`<div><h2>Competencies</h2><${Cd} t="Required level (role: Scientist B)">${Object.keys(S.req).map(k => html`<div key=${k} class="row sp"><span>${k}</span><select style=${{ width: 90 }} value=${S.req[k]} onChange=${e => { set(s => ({ req: { ...s.req, [k]: +e.target.value } })); T('Required level updated') }}>${[1, 2, 3, 4, 5].map(i => html`<option key=${i}>${i}</option>`)}</select></div>`)}<//>
+<${Cd} t="Add competency"><input placeholder="Competency name" value=${n} onInput=${e => sn(e.target.value)}/><button class="b" onClick=${() => { if (!n.trim()) return T('Enter a name'); set(s => ({ req: { ...s.req, [n.trim()]: 3 }, cur: { ...s.cur, [n.trim()]: 1 } })); sn(''); T('Competency added') }}>Add</button><//></div>`
+        };
+        const HM = [['Research', [82, 91, 88, 72]], ['Operations', [54, 76, 62, 48]], ['IT', [91, 95, 86, 93]], ['Administration', [38, 52, 45, 41]]];
+        const Org = A => {
+            const G = [['Machine Learning', 124, 'High'], ['Cloud Computing', 87, 'Medium'], ['Data Visualization', 64, 'Medium'], ['Artificial Intelligence', 52, 'Medium']]; const [o, so] = useState(0);
+            return html`<div><h2>Organizational Capacity</h2><${Cd} t="Competency Heatmap"><div class="sc"><table class="hm"><thead><tr><th>Department</th><th>AI/ML</th><th>Python</th><th>Data</th><th>Cloud</th></tr></thead><tbody>${HM.map(([d, v]) => html`<tr key=${d}><td style=${{ textAlign: 'left' }}>${d}</td>${v.map((x, i) => html`<td key=${i} style=${{ background: `rgba(79,70,229,${(x / 100 * .85).toFixed(2)})`, color: x > 45 ? '#fff' : 'inherit' }}>${x}%</td>`)}</tr>`)}</tbody></table></div><//>
+<${Cd} t="Top Organizational Skill Gaps">${G.map(([k, n, s], i) => html`<div key=${k}><div class="row sp" style=${{ cursor: 'pointer', margin: '8px 0' }} onClick=${() => so(o == i + 1 ? 0 : i + 1)}><b>${i + 1}. ${k}</b><span><span class=${'bd ' + (s == 'High' ? 'er' : 'wa')}>${s}</span> ${n} employees</span></div>${o == i + 1 && html`<p class="mu">Departments most affected: ${HM.filter(x => x[1][0] < 60).map(x => x[0]).join(', ') || 'Operations'}. Recommended courses: ${C.filter(c => c.sk == k).map(c => c.t).join(', ') || 'Advanced AI Foundations (planned)'}. Available trainers: ${TR.filter(t => t.ex.includes(k) || t.ex.includes(k.replace('Artificial Intelligence', 'AI'))).map(t => t.n).join(', ') || '-'}.</p>`}<${Bar} v=${n} m=${130}/></div>`)}<//></div>`
+        };
+
+        const NAV = {
+            trainee: [['dashboard', '📊', 'Dashboard'], ['profile', '👤', 'Profile'], ['skills', '🧩', 'My Skills'], ['gap', '📉', 'Skill Gap'], ['roadmap', '🗺️', 'Learning Roadmap'], ['courses', '📚', 'Courses'], ['learning', '🎯', 'My Learning'], ['assess', '📝', 'Assessments'], ['certs', '🏅', 'Certificates']],
+            trainer: [['dashboard', '📊', 'Dashboard'], ['profile', '👤', 'Profile'], ['mycourses', '📚', 'My Courses'], ['create', '➕', 'Create Course'], ['tassess', '📝', 'Assessments'], ['learners', '👥', 'Learners'], ['match', '🔎', 'Trainer Matching']],
+            admin: [['dashboard', '📊', 'Dashboard'], ['users', '👥', 'Users'], ['acourses', '📚', 'Courses'], ['match', '🧑‍🏫', 'Trainers'], ['comps', '🧩', 'Competencies'], ['gaps', '📉', 'Skill Gaps'], ['orgcap', '🏢', 'Organizational Capacity'], ['analytics', '📈', 'Analytics']]
+        };
+        const Road = A => html`<div><h2>Learning Roadmap</h2><${Path} S=${A.S} go=${A.go}/></div>`;
+        const P = {
+            trainee: { dashboard: Dash, profile: Prof, skills: Skills, gap: Gap, roadmap: Road, courses: Cat, learning: Learn, assess: AList, certs: Certs, course: Course, take: Take, cert: Cert },
+            trainer: { dashboard: TDash, profile: Prof, mycourses: MyC, create: Create, tassess: Create, learners: Learners, match: Match },
+            admin: { dashboard: ADash, users: Users, acourses: ACourses, match: Match, comps: Comps, gaps: Org, orgcap: Org, analytics: Analytics }
+        };
+        const FE = [['📉', 'Skill Gap Analysis', 'Compare current and required competency for every role.'], ['🎯', 'Personalized Learning', 'Roadmaps and recommendations that explain why.'], ['🤝', 'Trainer Matching', 'Match courses with the most suitable expert trainers.'], ['🏢', 'Organizational Analytics', 'Department heatmaps and top skill gaps.']];
+
+        function App() {
+            const [S, setS] = useState(() => load() || S0), [tm, setTm] = useState('');
+            useEffect(() => save(S), [S]);
+            const set = p => setS(s => ({ ...s, ...(typeof p == 'function' ? p(s) : p) }));
+            const T = m => { setTm(m); setTimeout(() => setTm(''), 2400) };
+            const go = (page, cid) => { set({ page, cid: cid || null, nopen: 0 }); window.scrollTo(0, 0) };
+            const A = { S, set, T, go };
+            if (S.view == 'landing') return html`<div class="land"><header class="top"><b>🎓 CAPACITY CONNECT</b><button class="b" onClick=${() => set({ view: 'login' })}>Login</button></header>
+<section class="hero"><h1>CAPACITY CONNECT</h1><h3>Build Skills. Connect Expertise. Strengthen Organizational Capacity.</h3><p style=${{ maxWidth: 640, margin: '12px auto 24px' }}>An intelligent learning and competency platform that identifies skill gaps, recommends personalized learning paths, connects trainees with expert trainers and gives organization-wide capacity insights.</p>
+<button class="b" style=${{ background: '#fff', color: '#312e81' }} onClick=${() => set({ view: 'login' })}>Get Started</button> <button class="b o" style=${{ color: '#fff', borderColor: '#fff' }} onClick=${() => document.getElementById('feat').scrollIntoView({ behavior: 'smooth' })}>Explore Platform</button></section>
+<div id="feat" class="g">${FE.map(([i, t, d]) => html`<div key=${t} class="cd"><h2>${i}</h2><h3>${t}</h3><p class="mu">${d}</p></div>`)}</div></div>`;
+            if (S.view == 'login') return html`<div style=${{ maxWidth: 900, margin: '0 auto', padding: 24 }}><h2>Choose a demo role</h2><div class="g">${[['trainee', 'Trainee', 'Rahul Sharma, Scientist B'], ['trainer', 'Trainer', 'Dr. Anita Verma, ML expert'], ['admin', 'Admin', 'S. Banerjee, Capacity Head']].map(([r, t, d]) => html`<div key=${r} class="cd"><h3>${t}</h3><p class="mu">${d}</p><button class="b" onClick=${() => set({ view: 'app', role: r, page: 'dashboard', cid: null })}>Enter as ${t.toUpperCase()}</button></div>`)}</div><button class="b o" onClick=${() => set({ view: 'landing' })}>← Back</button></div>`;
+            const Pg = P[S.role][S.page] || P[S.role].dashboard, un = S.notifs.filter(n => !n.r).length;
+            return html`<div><header class="top"><b>🎓 CAPACITY CONNECT</b><div class="row"><button class="bell" onClick=${() => set({ nopen: !S.nopen })}>🔔${un > 0 && html`<em>${un}</em>`}</button><span class="bd">${S.role}</span>
+<button class="b o s" onClick=${() => { try { localStorage.removeItem('cc1') } catch (e) { } setS(S0) }}>Reset demo</button><button class="b s" onClick=${() => set({ view: 'login', role: null })}>Logout</button></div>
+${S.nopen && html`<div class="pop"><div class="row sp"><b>Notifications</b><button class="b o s" onClick=${() => set(s => ({ notifs: s.notifs.map(n => ({ ...n, r: 1 })) }))}>Mark all read</button></div>${S.notifs.length ? S.notifs.map((n, i) => html`<p key=${i} style=${{ fontWeight: n.r ? 400 : 700 }}>${n.t}</p>`) : html`<${Empty} m="No notifications"/>`}</div>`}</header>
+<div class="app"><nav class="side">${NAV[S.role].map(([k, i, l]) => html`<a key=${k} class=${S.page == k || (S.role == 'trainee' && ((S.page == 'course' && k == 'courses') || (S.page == 'take' && k == 'assess') || (S.page == 'cert' && k == 'certs'))) ? 'on' : ''} onClick=${() => go(k)}>${i} ${l}</a>`)}</nav>
+<main class="main"><${Pg} ...${A}/></main></div>${tm && html`<div class="toast">${tm}</div>`}</div>`
+        }
+        ReactDOM.createRoot(document.getElementById('r')).render(h(App));
+    </script>
+</body>
+
+</html>
